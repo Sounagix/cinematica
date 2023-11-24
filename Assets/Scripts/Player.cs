@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float velocity;
 
+    [SerializeField]
+    private CameraMaster master;
+
     private int index = 0;
 
     private Vector3 dir;
@@ -23,23 +26,24 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Animator animator;
 
-    private void Start()
+    private AudioSource audioSource;
+
+    [SerializeField]
+    private Animator carAnimator;
+
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.SetDestination(points[index].position);
-        animator.SetBool("Walking", true);
-
-
-        //dir = (points[index].position - transform.position);
-        //transform.forward = dir;
+        audioSource = GetComponent<AudioSource>();  
     }
 
-    private void Update()
+    public void StartWalking()
     {
-        //if (move)
-        //{
-        //    transform.position = transform.position + (dir * velocity);
-        //}
+        agent.SetDestination(points[index].position);
+        animator.SetBool("Walking", true);
+        audioSource.Play();
+        carAnimator.SetTrigger("Car");
+        carAnimator.gameObject.GetComponent<AudioSource>().Play();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -51,6 +55,7 @@ public class Player : MonoBehaviour
             {
                 move = false;
                 animator.SetBool("Walking", false);
+                audioSource.Stop();
                 print("Destino alcanzado");
 
             }
@@ -60,6 +65,11 @@ public class Player : MonoBehaviour
                 //dir = (points[index].position - transform.position);
                 //transform.forward = dir;
             }
+        }
+        else if (other.CompareTag("Trigger"))
+        {
+            master.OnTrigger();
+            Destroy(other.gameObject);
         }
     }
 }

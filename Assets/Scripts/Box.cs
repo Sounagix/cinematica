@@ -6,6 +6,9 @@ public class Box : MonoBehaviour
 {
     private AudioSource audioSource;
 
+    [SerializeField]
+    private ParticleSystem ptc;
+
 
     private void Awake()
     {
@@ -16,5 +19,6 @@ public class Box : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         audioSource.Play();
+        ptc.Play();
     }
 }
